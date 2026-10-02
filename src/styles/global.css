@@ -32,12 +32,18 @@ img{display:block}
 .tab[aria-current="page"]{background:var(--soft);color:var(--fg);transform:scale(1.08)}
 /* when the nav can't fit on one row (set by the layout script): tabs drop to a second row,
    the hanger stays top right; if the tabs still don't fit, Home goes (the name links home) */
-.nav.stacked{gap:14px 12px}
+.nav.stacked{gap:28px 12px}
 .nav.stacked .hanger-btn{order:2;margin-left:auto;margin-right:10px;margin-top:12px}
 .nav.stacked .tabs{order:3;margin-left:-6px;width:calc(100% + 6px)}
+/* name and logos sit on the hanger's visual center (the open wardrobe on touch screens) */
+.nav.stacked .brand-row{margin-top:12px}
+.nav.tight .tabs{margin-left:0;width:100%;justify-content:safe center}
 .nav.stacked.tight .tab[href="/"]{display:none}
+/* with the Home tab hidden, the name gets the active-tab pill on the home page */
+.nav.tight .brand[aria-current="page"]{background:var(--soft);padding:8px 13px 6px;margin-left:-13px;border-radius:999px}
 /* touch screens can't hover, so the wardrobe stays open */
 @media (hover:none){
+  .nav.stacked .brand-row{margin-top:27px}
   .hanger-btn .wardrobe{opacity:1;transform:translateX(-50%) scale(1)}
   .hanger-btn .door{transform:scaleX(1)}
 }
