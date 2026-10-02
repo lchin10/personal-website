@@ -4,7 +4,7 @@
   --tag:#F3EEE3; --tag-ink:#2A2824; --tag-mute:#6E685E; --tag-chip:#E6DFD0; --tag-line:#D9D1C1; --tag-ring:#CFC5B2;
   --f-display:"Newsreader", Georgia, serif; --f-body:"Hanken Grotesk", system-ui, sans-serif;
   /* colorway tokens (olive cardigan by default); JS swaps these per garment */
-  --bg:#56614A; --fg:#F5F3EB; --muted:#D5D9C8; --accent:#EBDCA9;
+  --prompt:#F2A65A; --bg:#56614A; --fg:#F5F3EB; --muted:#D5D9C8; --accent:#EBDCA9;
   --line:color-mix(in srgb,var(--fg) 18%,transparent); --rod:color-mix(in srgb,var(--fg) 38%,transparent); --soft:color-mix(in srgb,var(--fg) 9%,transparent);
   color-scheme:dark;
 }
@@ -30,7 +30,17 @@ img{display:block}
 .tab{text-decoration:none;padding:7px 13px;border-radius:999px;color:var(--muted);white-space:nowrap;font-size:15px;transition:background-color .2s,color .2s,transform .3s cubic-bezier(.3,1.4,.5,1)}
 .tab:hover{color:var(--fg);transform:scale(1.08)}
 .tab[aria-current="page"]{background:var(--soft);color:var(--fg);transform:scale(1.08)}
-@media (max-width:760px){.tabs{margin-left:-6px;width:calc(100% + 6px)}}
+/* when the nav can't fit on one row (set by the layout script): tabs drop to a second row,
+   the hanger stays top right; if the tabs still don't fit, Home goes (the name links home) */
+.nav.stacked{gap:14px 12px}
+.nav.stacked .hanger-btn{order:2;margin-left:auto;margin-right:10px;margin-top:12px}
+.nav.stacked .tabs{order:3;margin-left:-6px;width:calc(100% + 6px)}
+.nav.stacked.tight .tab[href="/"]{display:none}
+/* touch screens can't hover, so the wardrobe stays open */
+@media (hover:none){
+  .hanger-btn .wardrobe{opacity:1;transform:translateX(-50%) scale(1)}
+  .hanger-btn .door{transform:scaleX(1)}
+}
 
 .ph{display:grid;gap:6px;margin:28px 0 8px}
 .ph h2{font:400 clamp(34px,5vw,46px)/1.05 var(--f-display);letter-spacing:-.01em}
@@ -55,7 +65,7 @@ img{display:block}
 .copy{background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:13px}
 .home-photo{display:flex;justify-content:center}
 .home-photo .tag{width:min(340px,100%)}
-@media (max-width:820px){.home{grid-template-columns:minmax(0,1fr);padding-block:28px 8px}.home-photo{justify-content:flex-start}}
+@media (max-width:820px){.home{grid-template-columns:minmax(0,1fr);padding-block:28px 8px}.home-photo{justify-content:flex-start;margin-top:44px}}
 
 /* ---------- hang tags ---------- */
 .tag{position:relative;perspective:1400px;width:min(320px,100%);flex:0 0 auto;scroll-snap-align:start}
@@ -91,8 +101,11 @@ img{display:block}
 .turn{margin-top:auto;align-self:flex-start;display:inline-flex;align-items:center;gap:6px;background:none;border:1px solid var(--tag-line);color:var(--tag-mute)!important;border-radius:999px;padding:4px 11px 4px 9px;font-size:12.5px}
 .turn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2}
 .tag[data-flip]:hover .turn{border-color:var(--tag-mute);color:var(--tag-ink)!important}
-.thumbs{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
-.thumb{position:relative;padding:0;border:0;border-radius:8px;aspect-ratio:1;background:var(--tag-chip)}
+.thumbs{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.thumb{position:relative;flex:0 0 calc((100% - 16px) / 3);padding:0;border:0;border-radius:8px;aspect-ratio:1;background:var(--tag-chip)}
+/* 5 items: 3 over 2. 4 items: 2 by 2. 2 items: side by side. compact: one small row */
+.thumbs[data-n="4"] .thumb,.thumbs[data-n="2"] .thumb{flex-basis:calc((100% - 8px) / 2)}
+.thumbs.compact{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
 .thumb-img{display:block;width:100%;height:100%;border-radius:8px;overflow:hidden}
 .thumb img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
 .thumb:hover img{transform:scale(1.08)}
@@ -102,14 +115,16 @@ img{display:block}
 .thumb:hover .thumb-tip,.thumb:focus-visible .thumb-tip{opacity:1;transform:translate(-50%,0)}
 .thumb[aria-current="true"]{outline:2px solid var(--tag-ink);outline-offset:1px}
 
-.facts{display:grid;gap:12px;max-width:60ch;margin-top:8px}
-.facts li{display:grid;grid-template-columns:minmax(0,130px) minmax(0,1fr);gap:20px;align-items:baseline;padding:14px 0;border-bottom:1px solid var(--line)}
-.fact-n{font:400 30px/1.1 var(--f-display);letter-spacing:-.01em;font-variant-numeric:tabular-nums}
-
 /* about */
 .about{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:40px;align-items:start}
 .prose{display:grid;gap:14px;max-width:58ch;font-size:17px}
 .prose .muted{color:var(--muted);font-size:15.5px}
+/* easter egg on About: the phrase grows on hover and swaps the colorway like the hanger */
+.fit-egg{display:inline-block;background:none;border:0;padding:0;font:inherit;color:inherit;transform-origin:50% 70%;transition:transform .35s cubic-bezier(.3,1.4,.5,1),color .2s}
+.fit-egg:hover,.fit-egg:focus-visible{transform:scale(1.1);color:var(--fg)}
+/* terminal-style ">" leading each paragraph on Home and About, inline with the text */
+.home .name ~ p:not(.role)::before,.prose p::before{content:">";margin-right:.45em;font-family:"JetBrains Mono",ui-monospace,Consolas,monospace;font-size:.92em;font-weight:600;font-style:normal;color:var(--prompt);transition:color .4s}
+.home .name ~ p.looking::before,.prose p.muted::before{color:color-mix(in srgb,var(--prompt) 55%,var(--bg))}
 .care{border:1px solid var(--rod);border-radius:18px;padding:20px 22px;display:grid;gap:12px}
 .care h3{font:600 11px var(--f-body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 .care dl{margin:0;display:grid;gap:10px}
@@ -133,18 +148,43 @@ img{display:block}
 .rack .tag,.home-photo .tag{transform-origin:50% -30px}
 .rack .tag:hover,.home-photo .tag:hover{animation:swing 1.5s ease-in-out}
 @keyframes swing{0%{transform:rotate(0)}22%{transform:rotate(1.8deg)}50%{transform:rotate(-1.2deg)}76%{transform:rotate(.5deg)}100%{transform:rotate(0)}}
-.hanger-btn{display:grid;justify-items:center;gap:0;background:none;border:0;padding:0 4px;margin-left:4px}
+.hanger-btn{position:relative;isolation:isolate;display:grid;justify-items:center;gap:0;background:none;border:0;padding:0 4px;margin-inline:4px 22px}
 .hanger-btn .g{width:46px;height:57px;transform-origin:50% 3px}
 .hanger-btn small{font-size:11px;color:var(--muted);letter-spacing:.04em;transition:color .2s}
 .hanger-btn:hover small{color:var(--fg)}
 .hanger-btn:hover .g{animation:swing2 1.2s ease-in-out}
 @keyframes swing2{0%{transform:rotate(0)}25%{transform:rotate(9deg)}55%{transform:rotate(-6deg)}80%{transform:rotate(2deg)}100%{transform:rotate(0)}}
+.hanger-btn.nudge .g{animation:swing2 2.4s ease-in-out infinite}
+.hanger-btn.nudge small{color:var(--accent)}
+.hanger-btn.nudge::after{content:"";position:absolute;left:50%;top:28px;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;pointer-events:none;animation:halo 2.4s ease-out infinite}
+@keyframes halo{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 65%,transparent)}100%{box-shadow:0 0 0 20px transparent}}
+/* wardrobe opens behind the hanger on hover */
+.wardrobe{position:absolute;left:50%;top:-12px;z-index:-1;width:104px;height:114px;overflow:visible;pointer-events:none;opacity:0;transform:translateX(-50%) scale(.92);transition:opacity .35s,transform .45s cubic-bezier(.3,1.3,.5,1)}
+.wardrobe .wb{fill:var(--soft);stroke:var(--rod);stroke-width:1.5}
+.wardrobe .door{fill:color-mix(in srgb,var(--fg) 6%,transparent);stroke:var(--rod);stroke-width:1.5;transform:scaleX(0);transition:transform .6s cubic-bezier(.3,1.2,.5,1) .08s}
+.wardrobe .dl{transform-origin:14px 54px}
+.wardrobe .dr{transform-origin:86px 54px}
+.hanger-btn:hover .wardrobe,.hanger-btn:focus-visible .wardrobe{opacity:1;transform:translateX(-50%) scale(1)}
+.hanger-btn:hover .door,.hanger-btn:focus-visible .door{transform:scaleX(1)}
+/* colorway swap: garment flying from the hanger to the center */
+.fly{position:fixed;z-index:150;pointer-events:none;transform-origin:50% 50%}
+.fly .g{width:100%;height:100%}
+/* intro on first visit and refresh: garment centered on card stock, then the page opens from the center */
+@property --r{syntax:"<length>";inherits:false;initial-value:0px}
+.intro-veil{display:none}
+html.intro .intro-veil{display:grid;place-items:center;position:fixed;inset:0;z-index:200;pointer-events:none;background:var(--tag);--fg:var(--tag-ink);
+  -webkit-mask:radial-gradient(circle at 50% 50%,transparent var(--r),#000 calc(var(--r) + 1px));mask:radial-gradient(circle at 50% 50%,transparent var(--r),#000 calc(var(--r) + 1px));
+  animation:introHole .95s cubic-bezier(.5,0,.2,1) 1.25s forwards}
+@keyframes introHole{to{--r:75vmax}}
+.intro-g .g{width:min(170px,40vw);height:auto;animation:introG 1.5s ease both}
+@keyframes introG{0%{opacity:0;transform:scale(.9)}28%{opacity:1;transform:scale(1.12)}72%{opacity:1;transform:scale(1.12)}100%{opacity:0;transform:scale(.8) translateY(8px)}}
 .hanger-btn.out .g{animation:hOut .22s ease-in forwards}
 .hanger-btn.in .g{animation:hIn .7s cubic-bezier(.3,1.4,.5,1)}
 @keyframes hOut{to{transform:rotate(28deg) translateY(-6px);opacity:0}}
 @keyframes hIn{from{transform:rotate(-24deg);opacity:0}to{transform:rotate(0);opacity:1}}
 
 /* view transitions: colorway swaps and page-to-page navigation */
+html.vt-clip::view-transition-old(root),html.vt-clip::view-transition-new(root){animation:none;mix-blend-mode:normal}
 @view-transition{navigation:auto}
 ::view-transition-group(root){animation-duration:.55s}
 

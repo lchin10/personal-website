@@ -1,9 +1,9 @@
 // Colorways: one per piece Lukas wears often.
 export const G = {
-  cardigan: { name: 'Olive cashmere cardigan', bg: '#56614A', fg: '#F5F3EB', muted: '#D5D9C8', accent: '#EBDCA9', scheme: 'dark' },
-  denim: { name: 'Blue denim jeans', bg: '#34465F', fg: '#EEF1F5', muted: '#BAC5D5', accent: '#DDB283', scheme: 'dark' },
-  tee: { name: 'Black cotton tee', bg: '#1D1D1F', fg: '#EDEBE6', muted: '#A6A39D', accent: '#D9CFBA', scheme: 'dark' },
-  sweats: { name: 'Grey sweatpants', bg: '#BEC0C3', fg: '#25262A', muted: '#45484D', accent: '#3E4C62', scheme: 'light' },
+  cardigan: { name: 'Olive cashmere cardigan', bg: '#56614A', fg: '#F5F3EB', muted: '#D5D9C8', accent: '#EBDCA9', scheme: 'dark', prompt: '#F2A65A' },
+  denim: { name: 'Blue denim jeans', bg: '#34465F', fg: '#EEF1F5', muted: '#BAC5D5', accent: '#DDB283', scheme: 'dark', prompt: '#F4A261' },
+  tee: { name: 'Black cotton tee', bg: '#1D1D1F', fg: '#EDEBE6', muted: '#A6A39D', accent: '#D9CFBA', scheme: 'dark', prompt: '#F28C38' },
+  sweats: { name: 'Grey sweatpants', bg: '#BEC0C3', fg: '#25262A', muted: '#45484D', accent: '#3E4C62', scheme: 'light', prompt: '#C8621E' },
 } as const;
 
 export type GarmentKey = keyof typeof G;

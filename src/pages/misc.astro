@@ -3,7 +3,7 @@ import Base from '../layouts/Base.astro';
 import Tag from '../components/Tag.astro';
 import Thumbs, { type Media } from '../components/Thumbs.astro';
 import Photo from '../components/Photo.astro';
-import { food, fits, sewing, facts, instruments, climbing, piano } from '../data';
+import { food, fits, sewing, instruments, climbing, piano } from '../data';
 
 const pics = (list: string[][]): Media[] => list.map(([f, alt]) => ({ src: `/img/${f}.jpg`, alt }));
 ---
@@ -39,7 +39,7 @@ const pics = (list: string[][]): Media[] => list.map(([f, alt]) => ({ src: `/img
         <p class="t-eye">Instruments I've played</p>
         <ul class="t-list">{instruments.map(([name, where]) => <li><b>{name}</b>, {where}</li>)}</ul>
         <p class="t-eye">Watch me play</p>
-        <Thumbs items={piano} />
+        <Thumbs items={piano} compact />
       </Fragment>
     </Tag>
     <Tag>
@@ -57,14 +57,10 @@ const pics = (list: string[][]): Media[] => list.map(([f, alt]) => ({ src: `/img
       <h3 class="t-title">Fashion</h3>
       <Fragment slot="back">
         <p class="t-eye">Fashion</p>
-        <p class="t-body">The four colorways on this site come straight from my closet.</p>
+        <p class="t-body">The four colorways on this site come straight from my closet. Which one's your favorite?</p>
         <p class="t-eye">Pick a fit</p>
         <Thumbs items={pics(fits)} />
       </Fragment>
     </Tag>
   </div>
-  <h3 class="sub">A few more tidbits</h3>
-  <ul class="facts">
-    {facts.map(([n, text]) => <li><span class="fact-n">{n}</span><span>{text}</span></li>)}
-  </ul>
 </Base>

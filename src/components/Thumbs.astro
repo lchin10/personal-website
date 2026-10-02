@@ -3,9 +3,9 @@
 // `video` items play there; `sound` ones get controls and audio, the rest loop muted.
 // `title` shows on hover here and under the video on the front.
 export type Media = { src: string; alt: string; video?: string; sound?: boolean; title?: string };
-const { items }: { items: Media[] } = Astro.props;
+const { items, compact = false }: { items: Media[]; compact?: boolean } = Astro.props;
 ---
-<div class="thumbs">
+<div class:list={['thumbs', { compact }]} data-n={items.length}>
   {items.map((m, i) => (
     <button class="thumb" type="button" data-src={m.src} data-alt={m.alt} data-video={m.video} data-sound={m.sound ? '' : undefined} data-title={m.title}
       aria-current={String(i === 0)} aria-label={`${m.video ? 'Play' : 'Show'} ${m.title ?? m.alt}`}>

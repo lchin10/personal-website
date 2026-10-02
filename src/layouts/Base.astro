@@ -1,12 +1,13 @@
 ---
 import '../styles/global.css';
-import { G, garment } from '../garment';
+import { G, GK, garment } from '../garment';
 import { site } from '../data';
 
 interface Props { tab: 'home' | 'about' | 'experience' | 'projects' | 'misc'; title?: string }
 const { tab, title } = Astro.props;
 const tabs = [['home', 'Home', '/'], ['about', 'About', '/about'], ['experience', 'Experience', '/experience'], ['projects', 'Projects', '/projects'], ['misc', 'Misc', '/misc']];
-const colors = Object.fromEntries(Object.entries(G).map(([k, g]) => [k, [g.bg, g.fg, g.muted, g.accent, g.scheme]]));
+const colors = Object.fromEntries(Object.entries(G).map(([k, g]) => [k, [g.bg, g.fg, g.muted, g.accent, g.scheme, g.prompt]]));
+const svgs = Object.fromEntries(GK.map((k) => [k, garment(k)]));
 ---
 <!doctype html>
 <html lang="en">
@@ -18,6 +19,8 @@ const colors = Object.fromEntries(Object.entries(G).map(([k, g]) => [k, [g.bg, g
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" />
+    <!-- only the ">" glyph, for the terminal-style prompts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600&text=%3E&display=swap" />
     <!-- apply the saved colorway before first paint so pages never flash olive -->
     <script is:inline define:vars={{ colors }}>
       try {
@@ -26,11 +29,23 @@ const colors = Object.fromEntries(Object.entries(G).map(([k, g]) => [k, [g.bg, g
           const r = document.documentElement.style;
           ['--bg', '--fg', '--muted', '--accent'].forEach((p, i) => r.setProperty(p, c[i]));
           r.colorScheme = c[4];
+          r.setProperty('--prompt', c[5]);
         }
+        // intro plays on the first page of a visit and on refresh, not when moving between tabs
+        const nav = performance.getEntriesByType('navigation')[0];
+        if ((!sessionStorage.getItem('lc-seen') || (nav && nav.type === 'reload')) && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          document.documentElement.classList.add('intro');
+        }
+        sessionStorage.setItem('lc-seen', '1');
       } catch (_) {}
     </script>
   </head>
   <body>
+    <div class="intro-veil" aria-hidden="true"><div class="intro-g"></div></div>
+    <script is:inline define:vars={{ svgs }}>
+      // show whichever garment the visitor last picked (olive cardigan by default)
+      try { document.querySelector('.intro-g').innerHTML = svgs[localStorage.getItem('lc-g')] || svgs.cardigan; } catch (_) { document.querySelector('.intro-g').innerHTML = svgs.cardigan; }
+    </script>
     <div class="site">
       <header class="nav">
         <div class="brand-row">
@@ -42,6 +57,12 @@ const colors = Object.fromEntries(Object.entries(G).map(([k, g]) => [k, [g.bg, g
           {tabs.map(([key, label, href]) => <a class="tab" href={href} aria-current={key === tab ? 'page' : undefined}>{label}</a>)}
         </nav>
         <button class="hanger-btn" id="hangerBtn" type="button" aria-label={`Change colorway. Wearing ${G.cardigan.name}.`}>
+          <svg class="wardrobe" viewBox="0 0 100 110" aria-hidden="true">
+            <rect class="wb" x="14" y="4" width="72" height="100" rx="5" />
+            <path class="wb" d="M18 16h64M24 104v4M76 104v4" fill="none" />
+            <path class="door dl" d="M14 4L2 10v88l12 6z" />
+            <path class="door dr" d="M86 4l12 6v88l-12 6z" />
+          </svg>
           <Fragment set:html={garment('cardigan')} /><small>tap to change</small>
         </button>
       </header>
@@ -60,7 +81,7 @@ const colors = Object.fromEntries(Object.entries(G).map(([k, g]) => [k, [g.bg, g
       function sync() {
         const g = G[cur];
         const r = document.documentElement.style;
-        r.setProperty('--bg', g.bg); r.setProperty('--fg', g.fg); r.setProperty('--muted', g.muted); r.setProperty('--accent', g.accent);
+        r.setProperty('--bg', g.bg); r.setProperty('--fg', g.fg); r.setProperty('--muted', g.muted); r.setProperty('--accent', g.accent); r.setProperty('--prompt', g.prompt);
         r.colorScheme = g.scheme;
         hanger.querySelector('.g')!.outerHTML = garment(cur);
         hanger.setAttribute('aria-label', `Change colorway. Wearing ${g.name}.`);
@@ -68,16 +89,78 @@ const colors = Object.fromEntries(Object.entries(G).map(([k, g]) => [k, [g.bg, g
       }
       if (cur !== 'cardigan') sync();
 
-      function wear(k: GarmentKey) {
+      // Colorway swap: the new garment flies from the hanger to the center, dips into the page,
+      // then the page repaints in its colors from a circle in the center out.
+      let busy = false;
+      function wear(k: GarmentKey, from?: Element) {
         const go = () => { cur = k; try { localStorage.setItem('lc-g', k); } catch {} sync(); };
-        if (!document.startViewTransition || reduce.matches) go(); else document.startViewTransition(go);
-      }
-
-      hanger.addEventListener('click', () => {
-        const next = GK[(GK.indexOf(cur) + 1) % GK.length];
+        if (reduce.matches) { go(); busy = false; return; }
+        // garment starts at the hanger, or centered on whatever was clicked (the About easter egg)
+        const h = hanger.querySelector('.g')!.getBoundingClientRect();
+        const o = (from ?? hanger.querySelector('.g')!).getBoundingClientRect();
+        const b = { width: h.width, height: h.height, left: o.left + o.width / 2 - h.width / 2, top: o.top + o.height / 2 - h.height / 2 };
         hanger.classList.remove('in');
         hanger.classList.add('out');
-        setTimeout(() => { wear(next); hanger.classList.remove('out'); void hanger.offsetWidth; hanger.classList.add('in'); }, reduce.matches ? 0 : 220);
+        const fly = document.createElement('div');
+        fly.className = 'fly';
+        fly.innerHTML = garment(k);
+        Object.assign(fly.style, { left: `${b.left}px`, top: `${b.top}px`, width: `${b.width}px`, height: `${b.height}px` });
+        document.body.append(fly);
+        const dx = innerWidth / 2 - (b.left + b.width / 2), dy = innerHeight / 2 - (b.top + b.height / 2);
+        const s = Math.min(170, innerWidth * 0.4) / b.width;
+        fly.animate([
+          { transform: 'translate(0, 0) scale(1)', opacity: 0.4 },
+          { transform: `translate(${dx}px, ${dy}px) scale(${s})`, opacity: 1, offset: 0.55, easing: 'ease-in-out' },
+          { transform: `translate(${dx}px, ${dy}px) scale(${s})`, opacity: 1, offset: 0.72, easing: 'ease-in' },
+          { transform: `translate(${dx}px, ${dy + 8}px) scale(${s * 0.72})`, opacity: 0 },
+        ], { duration: 1500, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards' }).finished.then(() => {
+          fly.remove();
+          const settle = () => { go(); hanger.classList.remove('out'); hanger.classList.add('in'); };
+          if (!document.startViewTransition) { settle(); busy = false; return; }
+          const root = document.documentElement;
+          root.classList.add('vt-clip');
+          const t = document.startViewTransition(settle);
+          t.ready.then(() => root.animate({ clipPath: ['circle(0px at 50% 50%)', `circle(${Math.hypot(innerWidth, innerHeight) / 2}px at 50% 50%)`] },
+            { duration: 900, easing: 'cubic-bezier(.5,0,.2,1)', pseudoElement: '::view-transition-new(root)' })).catch(() => {});
+          t.finished.finally(() => { root.classList.remove('vt-clip'); busy = false; });
+        });
+      }
+
+      // nav layout: one row if it fits; otherwise tabs wrap under the name and hanger; drop Home if still too tight
+      const navEl = document.querySelector<HTMLElement>('.nav')!;
+      const tabsEl = navEl.querySelector<HTMLElement>('.tabs')!;
+      function fitNav() {
+        navEl.classList.remove('stacked', 'tight');
+        const wrapped = tabsEl.offsetTop > navEl.querySelector<HTMLElement>('.brand-row')!.offsetTop + 8 || hanger.offsetTop > tabsEl.offsetTop + 8;
+        if (wrapped || tabsEl.scrollWidth > tabsEl.clientWidth) {
+          navEl.classList.add('stacked');
+          if (tabsEl.scrollWidth > tabsEl.clientWidth) navEl.classList.add('tight');
+        }
+      }
+      fitNav();
+      addEventListener('resize', fitNav);
+      document.fonts.ready.then(fitNav);
+
+      // after a few seconds, nudge visitors toward the hanger until they try it during this visit
+      const tried = (() => { try { return sessionStorage.getItem('lc-tried'); } catch { return null; } })();
+      const nudge = tried ? 0 : setTimeout(() => hanger.classList.add('nudge'), 6000);
+      hanger.addEventListener('pointerenter', () => { clearTimeout(nudge); hanger.classList.remove('nudge'); });
+
+      function tryOn(from?: Element) {
+        if (busy) return;
+        busy = true;
+        clearTimeout(nudge);
+        hanger.classList.remove('nudge');
+        try { sessionStorage.setItem('lc-tried', '1'); } catch {}
+        wear(GK[(GK.indexOf(cur) + 1) % GK.length], from);
+      }
+      hanger.addEventListener('click', () => tryOn());
+      document.querySelectorAll('.fit-egg').forEach((egg) => egg.addEventListener('click', () => tryOn(egg)));
+
+      // intro: remove the veil once the page has filled in
+      const veil = document.querySelector('.intro-veil');
+      veil?.addEventListener('animationend', (e) => {
+        if ((e as AnimationEvent).animationName === 'introHole') { veil.remove(); document.documentElement.classList.remove('intro'); }
       });
 
       // hang tags: flip on click, keep the hidden face out of tab order

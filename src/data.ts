@@ -54,7 +54,7 @@ export const projects: Project[] = [
     name: 'Pratt Print App',
     blurb: "A web app for Pratt Institute's 2D print space. Students and alumni send jobs to the digital printers with full control over the printer, paper size, orientation, and more.",
     stack: ['React', 'JavaScript', 'Python', 'SQL'],
-    points: ['Built for 5,000+ students and alumni without the bottleneck', 'Worked in collaboration with Pratt Institute\'s print manager'],
+    points: ['Built for 5,000+ students and alumni without the bottleneck', 'Worked in collaboration with Pratt Institute\'s Associate Director of Print Services'],
   },
   {
     name: 'Smart System for the Visually Impaired',
@@ -119,13 +119,6 @@ export const food = [
 export const sewing = [
   { src: '/img/sew-chalk-bag.jpg', alt: 'A chalk bag made from a pink plush, with a webbing belt and buckle', title: 'Turned a plush into a chalk bag for climbing.' },
   { src: '/img/sew-creatures.jpg', alt: 'Two small keychains sewn from dark denim and cream canvas, with jeans buttons for eyes', title: "2 keychains made for my friends' birthdays." },
-];
-
-// [big figure, what it means]
-export const facts = [
-  ['42.5s', 'My Tetris 40-line personal best.'],
-  ['1,000+', 'Days in a row on Duolingo, learning Korean and Chinese.'],
-  ['Sydney', 'Where I learned to breakdance while studying abroad.'],
 ];
 
 export const instruments = [
