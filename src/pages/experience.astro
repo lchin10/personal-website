@@ -1,0 +1,25 @@
+---
+import Base from '../layouts/Base.astro';
+import Tag from '../components/Tag.astro';
+import { experience } from '../data';
+---
+<Base tab="experience" title="Experience">
+  <header class="ph"><h2>Experience</h2></header>
+  <div class="rack">
+    {experience.map((e) => (
+      <Tag>
+        <p class="t-eye">{e.when}</p>
+        <h3 class="t-title">{e.role}</h3>
+        <p class="t-org">{e.org}</p>
+        <p class="t-meta">{e.place}</p>
+        <Fragment slot="back">
+          <p class="t-eye">What I did</p>
+          <ul class="t-list">{e.points.map((p) => <li>{p}</li>)}</ul>
+          <p class="t-eye">Built with</p>
+          <div class="chips">{e.stack.map((s) => <span>{s}</span>)}</div>
+          <a class="t-link" href={e.link} target="_blank" rel="noopener">{e.link.includes('github.com') ? 'View on GitHub' : 'Visit website'} ↗</a>
+        </Fragment>
+      </Tag>
+    ))}
+  </div>
+</Base>

@@ -1,0 +1,22 @@
+---
+// Cream hang tag. Content in the default slot is the front; a "back" slot makes the tag flip.
+const { class: cls = '' } = Astro.props;
+const flips = Astro.slots.has('back');
+const turn = '<button class="turn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>Turn over</button>';
+---
+<article class:list={['tag', cls]} data-flip={flips ? '' : undefined}>
+  <div class="tag-in">
+    <div class="face front">
+      <span class="hole"></span>
+      <slot />
+      {flips && <Fragment set:html={turn} />}
+    </div>
+    {flips && (
+      <div class="face back" inert>
+        <span class="hole"></span>
+        <slot name="back" />
+        <Fragment set:html={turn} />
+      </div>
+    )}
+  </div>
+</article>

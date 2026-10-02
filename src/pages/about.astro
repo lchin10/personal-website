@@ -1,0 +1,36 @@
+---
+import Base from '../layouts/Base.astro';
+import Tag from '../components/Tag.astro';
+import { skills, coursework, clubs } from '../data';
+---
+<Base tab="about" title="About">
+  <header class="ph"><h2>About</h2></header>
+  <div class="about">
+    <div class="prose">
+      <p>I studied Computer Engineering at Boston University with a minor in Music Performance, and graduated in May 2025.</p>
+      <p>During my years in college, I gained experience through backend migration work at MSG Entertainment and building Celeri from 0 to 1. After graduating, I worked across the stack to design and push an analytics dashboard to clients at VideoNest.</p>
+      <p>I like owning a feature from the schema to the screen, and I care about how the finished product feels to use.</p>
+      <p>I build with AI tools every day. I use Claude Code to move faster on real projects (including this site), and I keep up with new models and agent frameworks.</p>
+      <p class="muted">When I'm away from the keyboard, you can find me on a climbing wall, at the stove, or noodling on the piano.</p>
+    </div>
+    <aside class="care">
+      <h3>Toolkit</h3>
+      <dl>{skills.map(([k, v]) => <div><dt>{k}</dt><dd class="chips">{v.map((s) => <span>{s}</span>)}</dd></div>)}</dl>
+    </aside>
+  </div>
+  <h3 class="sub">Education</h3>
+  <div class="rack">
+    <Tag>
+      <p class="t-eye">May 2025</p>
+      <h3 class="t-title">Boston University</h3>
+      <p class="t-org">B.S. in Computer Engineering</p>
+      <p class="t-meta">Minor in Music Performance</p>
+      <Fragment slot="back">
+        <p class="t-eye">Coursework</p>
+        <div class="chips">{coursework.map((c) => <span>{c}</span>)}</div>
+        <p class="t-eye">Clubs and activities</p>
+        <ul class="t-list">{clubs.map((c) => <li>{c}</li>)}</ul>
+      </Fragment>
+    </Tag>
+  </div>
+</Base>

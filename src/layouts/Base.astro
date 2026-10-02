@@ -1,0 +1,143 @@
+---
+import '../styles/global.css';
+import { G, garment } from '../garment';
+import { site } from '../data';
+
+interface Props { tab: 'home' | 'about' | 'experience' | 'projects' | 'misc'; title?: string }
+const { tab, title } = Astro.props;
+const tabs = [['home', 'Home', '/'], ['about', 'About', '/about'], ['experience', 'Experience', '/experience'], ['projects', 'Projects', '/projects'], ['misc', 'Misc', '/misc']];
+const colors = Object.fromEntries(Object.entries(G).map(([k, g]) => [k, [g.bg, g.fg, g.muted, g.accent, g.scheme]]));
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title ? `${title} · Lukas Chin` : 'Lukas Chin'}</title>
+    <meta name="description" content="Lukas Chin, junior full-stack software engineer." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" />
+    <!-- apply the saved colorway before first paint so pages never flash olive -->
+    <script is:inline define:vars={{ colors }}>
+      try {
+        const c = colors[localStorage.getItem('lc-g')];
+        if (c) {
+          const r = document.documentElement.style;
+          ['--bg', '--fg', '--muted', '--accent'].forEach((p, i) => r.setProperty(p, c[i]));
+          r.colorScheme = c[4];
+        }
+      } catch (_) {}
+    </script>
+  </head>
+  <body>
+    <div class="site">
+      <header class="nav">
+        <div class="brand-row">
+          <a class="brand" href="/">Lukas Chin</a>
+          <a class="ico" href={site.github} target="_blank" rel="noopener" aria-label="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+          <a class="ico" href={site.linkedin} target="_blank" rel="noopener" aria-label="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 110-4.12 2.06 2.06 0 010 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a>
+        </div>
+        <nav class="tabs" aria-label="Sections">
+          {tabs.map(([key, label, href]) => <a class="tab" href={href} aria-current={key === tab ? 'page' : undefined}>{label}</a>)}
+        </nav>
+        <button class="hanger-btn" id="hangerBtn" type="button" aria-label={`Change colorway. Wearing ${G.cardigan.name}.`}>
+          <Fragment set:html={garment('cardigan')} /><small>tap to change</small>
+        </button>
+      </header>
+      <main><slot /></main>
+      <footer class="foot"><span>Lukas Chin · {site.email}</span><span id="wearing">Wearing: {G.cardigan.name}</span></footer>
+    </div>
+
+    <script>
+      import { G, GK, garment, type GarmentKey } from '../garment';
+
+      const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+      const saved = (() => { try { return localStorage.getItem('lc-g'); } catch { return null; } })();
+      let cur: GarmentKey = saved && saved in G ? (saved as GarmentKey) : 'cardigan';
+      const hanger = document.getElementById('hangerBtn')!;
+
+      function sync() {
+        const g = G[cur];
+        const r = document.documentElement.style;
+        r.setProperty('--bg', g.bg); r.setProperty('--fg', g.fg); r.setProperty('--muted', g.muted); r.setProperty('--accent', g.accent);
+        r.colorScheme = g.scheme;
+        hanger.querySelector('.g')!.outerHTML = garment(cur);
+        hanger.setAttribute('aria-label', `Change colorway. Wearing ${g.name}.`);
+        document.getElementById('wearing')!.textContent = `Wearing: ${g.name}`;
+      }
+      if (cur !== 'cardigan') sync();
+
+      function wear(k: GarmentKey) {
+        const go = () => { cur = k; try { localStorage.setItem('lc-g', k); } catch {} sync(); };
+        if (!document.startViewTransition || reduce.matches) go(); else document.startViewTransition(go);
+      }
+
+      hanger.addEventListener('click', () => {
+        const next = GK[(GK.indexOf(cur) + 1) % GK.length];
+        hanger.classList.remove('in');
+        hanger.classList.add('out');
+        setTimeout(() => { wear(next); hanger.classList.remove('out'); void hanger.offsetWidth; hanger.classList.add('in'); }, reduce.matches ? 0 : 220);
+      });
+
+      // hang tags: flip on click, keep the hidden face out of tab order
+      function flip(tag: HTMLElement, force?: boolean) {
+        const hadFocus = tag.contains(document.activeElement);
+        const on = tag.classList.toggle('flipped', force);
+        (tag.querySelector('.front') as HTMLElement).inert = on;
+        (tag.querySelector('.back') as HTMLElement).inert = !on;
+        if (hadFocus) tag.querySelector<HTMLElement>(on ? '.back .turn' : '.front .turn')?.focus({ preventScroll: true });
+        // stop a playing video when its tag turns over; muted loops resume when it turns back
+        tag.querySelectorAll('video').forEach((v) => { if (on) v.pause(); else if (v.muted) v.play().catch(() => {}); });
+      }
+
+      // put a photo or video from the back of a tag onto its front
+      function show(tag: HTMLElement, d: DOMStringMap) {
+        const sound = 'sound' in d;
+        let el: HTMLElement;
+        let video: HTMLVideoElement | undefined;
+        if (d.video) {
+          video = Object.assign(document.createElement('video'), { src: d.video, poster: d.src, playsInline: true, muted: !sound, loop: !sound, controls: sound });
+          video.setAttribute('aria-label', d.alt!);
+          el = video;
+          if (sound) {
+            // performance: video centered in the photo-sized frame, piece name underneath
+            el = document.createElement('figure');
+            el.className = 't-stage';
+            el.append(video, Object.assign(document.createElement('figcaption'), { textContent: d.title ?? '' }));
+          }
+        } else {
+          el = Object.assign(document.createElement('img'), { src: d.src, alt: d.alt });
+        }
+        el.classList.add('t-photo');
+        el.dataset.photo = '';
+        tag.querySelector('[data-photo]')!.replaceWith(el);
+        // hover caption on the front; performances already show their title under the video
+        const cap = tag.querySelector('.t-cap');
+        if (cap) cap.textContent = sound ? '' : d.title ?? '';
+        video?.play().catch(() => {});
+      }
+
+      document.addEventListener('click', (e) => {
+        const t = e.target as HTMLElement;
+        const copy = t.closest<HTMLElement>('[data-copy]');
+        if (copy) {
+          const done = (msg: string) => { copy.textContent = msg; setTimeout(() => (copy.textContent = 'Copy email'), 1600); };
+          navigator.clipboard.writeText(copy.dataset.copy!).then(() => done('Copied'), () => done('Select and copy'));
+          return;
+        }
+        const thumb = t.closest<HTMLElement>('.thumb');
+        if (thumb) {
+          const tag = thumb.closest<HTMLElement>('.tag')!;
+          show(tag, thumb.dataset);
+          tag.querySelectorAll('.thumb').forEach((x) => x.setAttribute('aria-current', String(x === thumb)));
+          flip(tag, false);
+          return;
+        }
+        if (t.closest('a, .t-stage')) return;
+        const tag = t.closest<HTMLElement>('.tag[data-flip]');
+        if (tag) flip(tag);
+      });
+    </script>
+  </body>
+</html>

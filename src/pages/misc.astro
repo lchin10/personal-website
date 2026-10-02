@@ -1,0 +1,70 @@
+---
+import Base from '../layouts/Base.astro';
+import Tag from '../components/Tag.astro';
+import Thumbs, { type Media } from '../components/Thumbs.astro';
+import Photo from '../components/Photo.astro';
+import { food, fits, sewing, facts, instruments, climbing, piano } from '../data';
+
+const pics = (list: string[][]): Media[] => list.map(([f, alt]) => ({ src: `/img/${f}.jpg`, alt }));
+---
+<Base tab="misc" title="Misc">
+  <header class="ph"><h2>Off the clock</h2></header>
+  <div class="rack even">
+    <Tag>
+      <Photo item={climbing[0]} />
+      <h3 class="t-title">Bouldering</h3>
+      <Fragment slot="back">
+        <p class="t-eye">Bouldering</p>
+        <p class="t-body">Indoor bouldering is how I stay active outside work. It's a good excuse to get away from the screen (mostly).</p>
+        <p class="t-eye">On the wall</p>
+        <Thumbs items={climbing} />
+      </Fragment>
+    </Tag>
+    <Tag>
+      <Photo item={food[0]} />
+      <h3 class="t-title">Cooking</h3>
+      <Fragment slot="back">
+        <p class="t-eye">Cooking</p>
+        <p class="t-body">I love eating as much as I love cooking.</p>
+        <p class="t-eye">Pick a dish</p>
+        <Thumbs items={food} />
+      </Fragment>
+    </Tag>
+    <Tag>
+      <Photo item={piano[0]} />
+      <h3 class="t-title">Music</h3>
+      <Fragment slot="back">
+        <p class="t-eye">Music</p>
+        <p class="t-body">Music is my stress relief. I loved it so much I minored in Music Performance at Boston University</p>
+        <p class="t-eye">Instruments I've played</p>
+        <ul class="t-list">{instruments.map(([name, where]) => <li><b>{name}</b>, {where}</li>)}</ul>
+        <p class="t-eye">Watch me play</p>
+        <Thumbs items={piano} />
+      </Fragment>
+    </Tag>
+    <Tag>
+      <Photo item={sewing[0]} />
+      <h3 class="t-title">Sewing</h3>
+      <Fragment slot="back">
+        <p class="t-eye">Sewing</p>
+        <p class="t-body">I started sewing recently. The goal is to make a perfect pair of jeans for myself.</p>
+        <p class="t-eye">So far</p>
+        <Thumbs items={sewing} />
+      </Fragment>
+    </Tag>
+    <Tag>
+      <Photo item={pics(fits)[0]} />
+      <h3 class="t-title">Fashion</h3>
+      <Fragment slot="back">
+        <p class="t-eye">Fashion</p>
+        <p class="t-body">The four colorways on this site come straight from my closet.</p>
+        <p class="t-eye">Pick a fit</p>
+        <Thumbs items={pics(fits)} />
+      </Fragment>
+    </Tag>
+  </div>
+  <h3 class="sub">A few more tidbits</h3>
+  <ul class="facts">
+    {facts.map(([n, text]) => <li><span class="fact-n">{n}</span><span>{text}</span></li>)}
+  </ul>
+</Base>

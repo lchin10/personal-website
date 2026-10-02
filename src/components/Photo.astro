@@ -1,0 +1,9 @@
+---
+// Front photo of a hang tag. Its title (if any) shows on hover; thumbs on the back swap what's in the frame.
+import type { Media } from './Thumbs.astro';
+const { item }: { item: Media } = Astro.props;
+---
+<div class="t-frame">
+  <img class="t-photo" data-photo src={item.src} width="720" height="960" loading="lazy" alt={item.alt} />
+  <span class="t-cap" aria-hidden="true">{item.title}</span>
+</div>
