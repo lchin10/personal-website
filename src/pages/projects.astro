@@ -5,9 +5,10 @@ import { projects } from '../data';
 ---
 <Base tab="projects" title="Projects">
   <header class="ph"><h2>Projects</h2></header>
-  <div class="rack">
+  <div class="rack even">
     {projects.map((p) => (
       <Tag>
+        <img class="t-photo t-shot" src={p.image} width="960" height="720" loading="lazy" alt={p.alt} />
         <p class="t-eye">Project</p>
         <h3 class="t-title">{p.name}</h3>
         <p class="t-body">{p.blurb}</p>

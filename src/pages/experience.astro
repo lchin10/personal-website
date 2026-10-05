@@ -10,7 +10,7 @@ import { experience } from '../data';
       <Tag>
         <p class="t-eye">{e.when}</p>
         <h3 class="t-title">{e.role}</h3>
-        <p class="t-org">{e.org}</p>
+        <p class="t-org t-company"><img class="t-logo" src={e.logo} width="40" height="40" alt="" />{e.org}</p>
         <p class="t-meta">{e.place}</p>
         <Fragment slot="back">
           <p class="t-eye">What I did</p>

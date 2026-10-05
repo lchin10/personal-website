@@ -78,11 +78,18 @@ img{display:block}
 .tag-in{display:grid;position:relative;z-index:1;transform-style:preserve-3d;transition:transform .75s cubic-bezier(.2,.75,.2,1)}
 .tag.flipped .tag-in{transform:rotateY(180deg)}
 .face{grid-area:1/1;-webkit-backface-visibility:hidden;backface-visibility:hidden;position:relative;background:var(--tag);color:var(--tag-ink);border-radius:22px;padding:40px 22px 18px;display:flex;flex-direction:column;gap:10px;box-shadow:0 1px 2px rgba(0,0,0,.1),0 10px 28px rgba(0,0,0,.16)}
+.face.front{transform:rotateY(0deg)}
 .face.back{transform:rotateY(180deg)}
+/* mobile Safari can paint the back face mirrored before 3D kicks in on load, so keep the back
+   hidden until the tag is flipped; on flipping back, wait out the turn before hiding it again */
+.face.back{visibility:hidden;transition:visibility 0s .75s}
+.tag.flipped .face.back{visibility:visible;transition-delay:0s}
 .hole{position:absolute;top:14px;left:50%;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:var(--bg);box-shadow:inset 0 0 0 2px var(--tag-ring);transition:background-color .4s}
 .tag[data-flip] .face{cursor:pointer}
 .t-eye{font:600 11px/1.3 var(--f-body);letter-spacing:.12em;text-transform:uppercase;color:var(--tag-mute)}
 .t-title{font:500 26px/1.15 var(--f-display);text-wrap:balance}
+.t-company{display:flex;align-items:center;gap:10px}
+.t-logo{flex:none;width:40px;height:40px;border-radius:10px;object-fit:cover;box-shadow:0 0 0 1px var(--tag-line)}
 .t-org{font:italic 400 19px/1.3 var(--f-display)}
 .t-meta{display:grid;gap:2px;font-size:14px;color:var(--tag-mute)}
 .t-body{font-size:15px;line-height:1.55}
@@ -97,6 +104,7 @@ img{display:block}
 .t-link{color:var(--tag-ink);font-weight:600;font-size:14px;text-underline-offset:3px}
 .t-photo{width:100%;height:auto;aspect-ratio:3/4;object-fit:cover;border-radius:14px;background:var(--tag-chip)}
 .t-photo.portrait{aspect-ratio:4/5}
+.t-photo.t-shot{aspect-ratio:4/3}
 .t-frame{position:relative}
 .t-cap{position:absolute;left:10px;right:10px;bottom:10px;background:rgba(23,24,27,.74);color:#F3EEE3;font-size:13px;line-height:1.35;text-align:center;padding:7px 10px;border-radius:10px;pointer-events:none;opacity:0;transform:translateY(4px);transition:opacity .2s,transform .2s}
 .t-cap:empty{display:none}

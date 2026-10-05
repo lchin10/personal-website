@@ -5,7 +5,7 @@ import Thumbs, { type Media } from '../components/Thumbs.astro';
 import Photo from '../components/Photo.astro';
 import { food, fits, sewing, instruments, climbing, piano } from '../data';
 
-const pics = (list: string[][]): Media[] => list.map(([f, alt]) => ({ src: `/img/${f}.jpg`, alt }));
+const pics = (list: string[][]): Media[] => list.map(([f, alt]) => ({ src: `/img/fashion/${f}.jpg`, alt }));
 ---
 <Base tab="misc" title="Misc">
   <header class="ph"><h2>Off the clock</h2></header>

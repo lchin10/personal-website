@@ -23,8 +23,9 @@ npm run build    # static site in dist/
 
 ```
 public/
-  img/           Photos (portrait, hobbies, outfits)
-  media/         Climbing and piano videos, with their poster frames
+  img/           Photos by section: home, climbing, cooking, music, fashion, sewing,
+                 projects, and company/school logos
+  media/         Videos by section (climbing, music), each with its poster frame
 
 src/
   components/    Hang tag, tag photo and back thumbnails
