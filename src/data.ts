@@ -6,21 +6,21 @@ export const site = {
 
 export const experience = [
   {
-    role: 'Software Engineer', org: 'VideoNest', logo: '/img/logos/videonest.png', place: 'New York, NY', when: 'Oct 2025 – Mar 2026', link: 'https://videonest.co/',
+    role: 'Software Engineer', org: 'VideoNest', logo: '/img/logos/videonest.png', place: 'New York, NY', when: 'Sep 2025 – May 2026', link: 'https://videonest.co/',
     stack: ['Next.js', 'TypeScript', 'FastAPI', 'Python', 'Prisma'],
     points: [
-      'Owned the end-to-end build of a user-facing analytics dashboard pulling from 8 third-party data sources through APIs and daily sync pipelines.',
-      'Exposed the normalized data through internal API endpoints and built line and bar charts used by about 2,500 users, replacing a static table.',
-      'Fixed full-stack bugs in an Agile/Scrum team to keep rollouts stable.',
+      'Owned the end-to-end build of an analytics dashboard, integrating 10 third-party data sources via external APIs and custom daily sync pipelines into the backend.',
+      'Exposed normalized data through internal API endpoints, replacing a static internal table with a dynamic UI with line and bar charts used by ∼2,500 users and the internal team.',
+      'Resolved full-stack bugs in an Agile/Scrum workflow, ensuring stable feature rollouts through close collaboration with the team.',
     ],
   },
   {
-    role: 'Co-founder & Software Engineer', org: 'Celeri', logo: '/img/logos/celeri.png', place: 'Remote', when: 'Aug 2024 – Sep 2025', link: 'https://github.com/celeriTeam/celeri',
+    role: 'Co-founder & Lead Engineer', org: 'Celeri', logo: '/img/logos/celeri.png', place: 'Remote', when: 'Jun 2024 – Aug 2025', link: 'https://github.com/celeriTeam/celeri',
     stack: ['React Native', 'TypeScript', 'JavaScript', 'Firebase', 'Node.js'],
     points: [
-      'Built and shipped a cross-platform mobile app on iOS (TestFlight) and Android (Google Play) to 400+ beta users.',
-      'Architected the full backend: database schema, JWT auth flows and REST APIs for user and event management.',
-      'Ran beta feedback cycles and UX iterations to improve usability and retention.',
+      'Built and shipped a cross-platform mobile app on both iOS & Android, onboarding over 400 beta users.',
+      'Architected full backend, including database schema design, JWT authentication flows, and RESTful APIs, enabling secure and scalable user and event management.',
+      'Led two engineers through beta feedback cycles, triaging user-reported issues, delegating fixes and smaller features, and reviewing all code before release.',
     ],
   },
   {
@@ -32,7 +32,7 @@ export const experience = [
     ],
   },
   {
-    role: 'Software Developer', org: 'Castles Unlimited', logo: '/img/logos/castles.png', place: 'Newton, MA', when: 'Sep 2022 – Apr 2024', link: 'https://castlesunlimited.com/',
+    role: 'Software Developer', org: 'Castles Unlimited', logo: '/img/logos/castles.png', place: 'Newton, MA', when: 'Sep 2022 – May 2024', link: 'https://castlesunlimited.com/',
     stack: ['HTML', 'CSS', 'JavaScript'],
     points: [
       "Built the company's online presence, improving functionality and UI/UX across 6 websites.",
@@ -90,7 +90,7 @@ export const projects: Project[] = [
 export const skills: [string, string[]][] = [
   ['Languages', ['JavaScript', 'TypeScript', 'Python', 'SQL', 'C/C++']],
   ['Frameworks', ['React', 'Next.js', 'React Native', 'FastAPI', 'Node.js']],
-  ['AI / ML', ['LangGraph', 'LLMs', 'Multi-agent systems', 'Computer vision', 'OpenCV']],
+  ['AI / ML', ['LangGraph', 'LLMs', 'Multi-agent systems', 'Computer vision', 'OpenCV', 'Claude']],
   ['Tools & infrastructure', ['Docker', 'Kubernetes', 'PostgreSQL', 'Firebase', 'CI/CD', 'Git']],
 ];
 
